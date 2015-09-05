@@ -20,7 +20,6 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-#sudo apt-get dist-upgrade
 
  
 ## add ROS repository and key
@@ -42,10 +41,11 @@ source ~/.bashrc
 ## get rosinstall and some additional dependencies
 sudo apt-get -y install python-rosinstall          \
                         ros-indigo-octomap-msgs    \
-						ros-indigo-joy             \
-						ros-indigo-geodesy         \
-						unzip                      \
-						ros-indigo-octomap-ros
+                        ros-indigo-joy             \
+                        ros-indigo-geodesy         \
+                        ros-indigo-octomap-ros     \
+                        unzip
+			
 
 ## add osrf repository
 ## install drcsim
@@ -59,3 +59,4 @@ sudo sh -c 'echo "deb http://packages.ros.org/ros-shadow-fixed/ubuntu/ $(lsb_rel
 sudo apt-get update
 sudo apt-get -y install ros-indigo-mavros \
                         ros-indigo-mavros-extras
+

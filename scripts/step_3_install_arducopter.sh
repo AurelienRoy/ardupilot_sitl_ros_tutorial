@@ -17,7 +17,11 @@
 #----------------------------------------------------------
 # Feel free to modify the destination path for the ROS workspace:
 PROJECT_DIR=~/shared_sitl
+# If you are not using an emulated Linux (VMware), you may prefer a project path
+# like this one:
+#PROJECT_DIR=~/autopilot/sitl
 
+mkdir -p $PROJECT_DIR
 
 ##---------------------------------------------------------
 ## Downloads ARDUPILOT
