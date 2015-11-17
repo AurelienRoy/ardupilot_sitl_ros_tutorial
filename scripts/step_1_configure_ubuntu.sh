@@ -10,44 +10,86 @@
 
 
 # Stops at the first error it encounters
-#set -e
+set -e
 
 echo "Initial setup of Ubuntu"
 
+CWD=$(pwd)
+OPT="/opt"
+
 BASE_PKGS="gawk make git arduino-core curl"
-SITL_PKGS="g++ python-pip python-matplotlib python-serial python-wxgtk2.8 python-scipy python-opencv python-numpy python-empy python-pyparsing ccache"
-AVR_PKGS="gcc-avr binutils-avr avr-libc"
-PYTHON_PKGS="pymavlink MAVProxy droneapi"
+SITL_PKGS="g++ python-pip python-matplotlib python-serial python-wxgtk2.8 python-scipy python-opencv python-numpy python-pyparsing ccache realpath"
+PYTHON_PKGS="pymavlink MAVProxy droneapi catkin_pkg"
 PX4_PKGS="python-serial python-argparse openocd flex bison libncurses5-dev \
           autoconf texinfo build-essential libftdi-dev libtool zlib1g-dev \
-          zip genromfs"
+          zip genromfs python-empy"
+BEBOP_PKGS="g++-arm-linux-gnueabihf"
 UBUNTU64_PKGS="libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386"
-EXTRA_PKGS="gnome-session-fallback git-core"
+ASSUME_YES=false
 
 # GNU Tools for ARM Embedded Processors
 # (see https://launchpad.net/gcc-arm-embedded/)
-ARM_ROOT="gcc-arm-none-eabi-4_7-2014q2"
-ARM_TARBALL="$ARM_ROOT-20140408-linux.tar.bz2"
+ARM_ROOT="gcc-arm-none-eabi-4_9-2015q3"
+ARM_TARBALL="$ARM_ROOT-20150921-linux.tar.bz2"
 ARM_TARBALL_URL="http://firmware.diydrones.com/Tools/PX4-tools/$ARM_TARBALL"
 
+# Ardupilot Tools
+ARDUPILOT_TOOLS="ardupilot/Tools/autotest"
+
+function maybe_prompt_user() {
+    if $ASSUME_YES; then
+        return 0
+    else
+        read -p "$1"
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            return 0
+        else
+            return 1
+        fi
+    fi
+}
+
+
+OPTIND=1  # Reset in case getopts has been used previously in the shell.
+while getopts "y" opt; do
+    case "$opt" in
+        \?)
+            exit 1
+            ;;
+        y)  ASSUME_YES=true
+            ;;
+    esac
+done
+
+if $ASSUME_YES; then
+    APT_GET="sudo apt-get -qq --assume-yes"
+else
+    APT_GET="sudo apt-get"
+fi
 
 sudo usermod -a -G dialout $USER
 
-sudo apt-get -y remove modemmanager
-sudo apt-get -y update
-sudo apt-get -y install dos2unix g++-4.7 ccache python-lxml screen
-sudo apt-get -y install $BASE_PKGS $SITL_PKGS $PX4_PKGS $UBUNTU64_PKGS $AVR_PKGS
-sudo apt-get -y install $EXTRA_PKGS
-sudo pip -q install $PYTHON_PKGS
-sudo pip install catkin_pkg
-sudo apt-get -y dist-upgrade
+$APT_GET remove modemmanager
+$APT_GET update
+$APT_GET install $BASE_PKGS $SITL_PKGS $PX4_PKGS $BEBOP_PKGS $UBUNTU64_PKGS
+sudo pip2 -q install $PYTHON_PKGS
 
-# ARM toolchain
-if [ ! -d /opt/$ARM_ROOT ]; then
+if [ ! -d $OPT/$ARM_ROOT ]; then
     (
-        cd /opt;
-        sudo wget -nv $ARM_TARBALL_URL;
+        cd $OPT;
+        sudo wget $ARM_TARBALL_URL;
         sudo tar xjf ${ARM_TARBALL};
         sudo rm ${ARM_TARBALL};
     )
 fi
+
+exportline="export PATH=$OPT/$ARM_ROOT/bin:\$PATH";
+if ! grep -Fxq "$exportline" ~/.profile ; then
+    if maybe_prompt_user "Add $OPT/$ARM_ROOT/bin to your PATH [Y/n]?" ; then
+        echo $exportline >> ~/.profile
+        $exportline
+    else
+        echo "Skipping adding $OPT/$ARM_ROOT/bin to PATH."
+    fi
+fi
+
