@@ -76,8 +76,10 @@ sudo apt-get update
 sudo apt-get -y install ros-indigo-mavros \
                         ros-indigo-mavros-extras
 
-echo "ROS is now installed"
-echo "You should close this terminal and open a new one before launching"
-echo "the step_5 script"
+RED='\033[0;32m'
+NC='\033[0m' # No Color
+printf "${RED}ROS is now installed \n${NC}"
+printf "${RED}You should close this terminal and open a new one before launching the step_5 script\n${NC}"
+
 
 
