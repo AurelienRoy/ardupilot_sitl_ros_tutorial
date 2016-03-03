@@ -1,0 +1,53 @@
+------------------------------------
+Complete Install:
+Go to : https://github.com/AurelienRoy
+
+>> cd ~/
+>> git clone https://github.com/AurelienRoy/ardupilot_sitl_ros_tutorial.git
+
+Inthis folder you will find all the instrucitons and the steps to install Gazebo Ros and Ardupilot.
+Launch step1, step3 (ArduPilot), step4 (ROS), step5 (ROS WorkSpace) in folder <step_scripts> and replace git repositories by ours.
+Add in the step 5 the Hector_Lib repository clone
+
+Nota: Sometimes the access rights of files and folders are not granted, 
+do : >> chmod +x ./*.sh
+
+------------------------------------
+Get the folders :
+
+Go to https://github.com/AurelienRoy and get the projects ardupilot, mavlink, MAVProxy : 
+
+>> cd ~/shared_sitl
+>> git clone https://github.com/AurelienRoy/MAVProxy.git --branch map_overlay
+>> git clone https://github.com/AurelienRoy/ardupilot.git --branch wall_follow
+>> git clone https://github.com/AurelienRoy/mavlink-gbp-release.git --branch wall_follow
+>> git clone https://github.com/AurelienRoy/ardupilot_sitl_gazebo_plugin.git
+
+------------------------------------
+Compile MAVLink :
+
+Launch "2.script_compile_mavlink.sh"
+Be Carefull, the name "ros-indigo-mavlink_2015.25.11-0trusty_amd64.deb" could differ. Its folder is ~/shared_sitl.  Modify the .sh et relaunch the script
+
+
+------------------------------------
+Compile  MAVProxy : 
+
+Open the file "3.compile-install MavProxy.txt" et follow the instructions
+
+------------------------------------
+Install Eclipse : 
+Install Eclipse: Follow the instructions from "4.Setup Eclipse Linux.txt", and use the script "4.install_eclipse.sh".
+
+-----------------------------------
+Compile ros
+>> roscd
+>> cd ..
+>> catkin_make
+Do not hesitate to recompile twice because of the bad dependances recognition in the compilation.
+
+---------------------------------------
+Launch the Plugin !!
+
+Open the file "5.Launch ArduPilot_Gazebo.txt" and follow the instructions.
+

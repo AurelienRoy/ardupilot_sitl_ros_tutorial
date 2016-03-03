@@ -1,0 +1,32 @@
+Mavlink version from 19/10/2015
+https://github.com/mavlink/mavlink
+
+compile / install : 
+
+  cd pymavlink
+  sudo python setup.py install
+
+
+
+compile and install (in ROS directory) : 
+
+  cd ~/px4/MavLink-gndStation/mavlink2/mavlink-gpb-release
+  sed 's|\(2014.11.11-3trusty\)|\1-custom|' -i debian/changelog
+  fakeroot dpkg-buildpackage -us -uc -b
+  cd ..
+  sudo dpkg -i ./ros-indigo-mavlink_2015.10.10-0trusty_amd64.deb 
+
+and then do a
+  catkin_make
+to recompile ROS
+
+https://github.com/mavlink/mavros/issues/166
+http://unix.stackexchange.com/questions/159094/install-from-a-deb-file-by-dpkg-i-or-by-apt
+
+
+
+git clone https://github.com/mavlink/mavlink-gbp-release.git -b debian/indigo/trusty/mavlink
+cd mavlink-gpb-release
+<<< copy your messege definitions or edit >>>
+
+

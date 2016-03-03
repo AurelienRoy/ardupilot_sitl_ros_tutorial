@@ -1,0 +1,42 @@
+
+ArduCopter side:
+  modify the file "ardupilotmega.xml" on "ardupilot/libraries/GCS_MAVLink/message_definitions"
+  
+  in a terminal, type:
+    cd ~/shared_sitl/ardupilot
+    ./libraries/GCS_MAVLink/generate.sh
+
+then modify the Ardu code in file GCS_Mavlink.cpp.
+
+
+Ground station side, python:
+  modify the file "ardupilotmega.xml" on "MavLink-gndStation/mavlink2/mavlink-gbp-release/message_definitions/v1.0"
+
+compile and install (in ROS directory) : 
+
+  cd ~/shared_sitl/MavLink-gndStation/mavlink2/mavlink-gbp-release
+  sed 's|\(2014.11.11-3trusty\)|\1-custom|' -i debian/changelog
+  fakeroot dpkg-buildpackage -us -uc -b
+  cd ..
+  sudo dpkg -i ./ros-indigo-mavlink_2015.10.10-0trusty_amd64.deb 
+
+and then do a
+  catkin_make
+to recompile ROS
+
+
+
+_____________________________________________________
+OBSOLETE:
+Ground station side, python:
+  modify the file "ardupilotmega.xml" on "MavLink-gndStation/mavlink/message_definitions/v1.0"
+  
+  in a terminal, type:
+    cd ~/px4/MavLink-gndStation/mavlinkpymavlink
+    sudo python setup.py install
+
+    
+build folders are:
+ /usr/local/lib/python2.7/dist-packages/pymavlink
+ /opt/ros/indigo/lib/python2.7/dist-packages/pymavlink
+ 

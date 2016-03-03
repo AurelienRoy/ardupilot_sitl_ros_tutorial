@@ -1,0 +1,7 @@
+Once Launched:
+
+In the first console Nautilus you will get mavproxy values. You can control the drone in this terminal with MavProxy console commands (for example module load map, module load console, rc 3 1500, module load graph, graph WIND.direction, graph timespan60,output add 192.168.1.31:14551)
+On the second console (Xterm) you will get gazebo launch datas 
+
+On another terminal you can launch RVIZ which catch topic to show datas like camera footages
+: rviz, add, By topic /recorder_cam OK

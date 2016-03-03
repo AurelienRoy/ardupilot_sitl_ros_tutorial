@@ -1,0 +1,82 @@
+__________________________________________________
+Option A.1: Arducopter From Script (Our preffered method)
+
+
+Launch 'sim_vehicle.sh' with the option "-v ArduCopter -f Gazebo -r empty_world -L Annecy".
+
+cd ~/shared_sitl/ardupilot/Tools/autotest
+./sim_vehicle.sh -v ArduCopter -f Gazebo -r empty_world -L Annecy --map --console
+
+It uses the current ArduCopter firmware.
+In this case Gazebo is launched from 'SIM_Gazebo.cpp', with a call to
+the 'start_ros_gazebo()' function.
+It will run "apm.launch" start file.
+
+With this method, you do not see ArduCopter's print outputs.
+__________________________________________________
+Option A.2: ArduPlane From Script (Our preffered method)
+
+Same as Arducopter
+
+cd ~/shared_sitl/ardupilot/Tools/autotest
+./sim_vehicle.sh -v ArduPlane -f Gazebo -r empty_world_cessna -L Annecy --map --console --out 192.168.1.30:14550
+
+Use --out 192.168.1.30:14550 when you connect another laptop to mavproxy. With ipconfig on this laptop you can see the IPV4 adress and connect throw Mission Planner or APM planner in UDP.
+
+__________________________________________________
+Option B: From Eclipse, Gazebo started by Ardu
+
+Define the .elf launch arguments:
+ -S -I0 --home 45.843136,6.1615122,16,180 --model Gazebo --speedup=1 --autotest-dir X --launch-world X
+
+
+Launch the ArduCopter source code
+Make sure that in 'SIM_Gazebo.cpp' the function call to
+'start_ros_gazebo()' is not commented out (should be in the class constructor).
+It will run "apm.launch" start file.
+Eclipse run configuration: "SITL Gazebo"
+
+__________________________________________________
+Option C: From Eclipse, and Gazebo from terminal
+
+
+Define the .elf launch arguments:
+ -S -I0 --home 45.843136,6.1615122,16,180 --model Gazebo --speedup=1 --autotest-dir X --launch-world X
+
+In the file 'libraries/SITL/SIM_Gazebo.cpp', comment the line
+ #define LAUNCH_ROS_FROM_ARDUPILOT
+
+In a terminal alongside, type in:  (current directory does not matter)
+  "roslaunch arducopter_sitl_gazebo_plugin apm.launch"
+
+roslaunch ardupilot_sitl_gazebo_plugin empty_world.launch
+
+First launch ArduCopter from Eclipse, wait for a few seconds, then run the ROS command
+in the terminal. For ArduCopter will wait for MAVROS, but MAVROS will not wait
+for ArduCopter (it exits immediately if nobody answers).
+
+Eclipse run configuration: "SITL Gazebo"
+
+
+cd ~/px4/MavProxy/MAVProxy/build/scripts-2.7
+mavproxy.py --master 127.0.0.1:14550 --out 127.0.0.1:14551 --cmd=" map overlay /home/aurelien/ros/catkin_ws/src/arducopter_sitl_gazebo_plugin/worlds/empty_world/map_w40m_h40m.png 45.8430554 6.1613957;" --map --console --aircraft aircraft_generic
+
+
+ cd ~/px4/MavProxy/MAVProxy/build/scripts-2.7
+  ./mavproxy.py --master 127.0.0.1:14550 --out 192.168.1.30:14551 --console --map --aircraft aircraft_generic
+
+  OR
+  ./mavproxy.py --master 127.0.0.1:14550 --out 192.168.1.30:14551 --console --map --aircraft aircraft_warehouse_full
+ 
+ OR
+  ./mavproxy.py --master 127.0.0.1:14550 --out 192.168.1.30:14551 --console --map --aircraft aircraft_outdoor
+
+__________________________________________________
+Once Launched:
+
+In the first console Nautilus you will get mavproxy values. You can control the drone in this terminal with MavProxy console commands (for example module load map, module load console, rc 3 1500, module load graph, graph WIND.direction, graph timespan60,output add 192.168.1.31:14551)
+On the second console (Xterm) you will get gazebo launch datas 
+
+On another terminal you can launch RVIZ which catch topic to show datas like camera footages
+: rviz, add, By topic /recorder_cam OK
+

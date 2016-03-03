@@ -1,0 +1,156 @@
+
+
+Downlowd Eclipse
+https://eclipse.org/downloads/
+Linux version, 64 bits C++
+
+Move the script "install_eclipse.sh" to the folder where the eclipse(...).tar.gz
+is located.
+Run the script.
+
+
+# NO:
+# Uncompress it:
+# tar -xf eclipse(...).tar
+# Run it:
+# cd eclipse/
+# ./eclipse
+
+Create a workspace anywhere
+
+Import Project / C/C++ / Existing Code as Makefile Project
+Select the ArduCopter directory (not ardupilot)
+
+Select the Cross ... compiler (exact ?)
+
+0. GENERAL PROPERTIES
+In the menu bar Window / Preferences, got to category
+Geberal / Workspace
+And activate the checkbox "Save automatically before build"
+
+Project Properties (right click menu):
+
+1. BUILDER PATH
+In left menu tab "C/C++ Build",
+In window tab "Builder Settings":
+For Build location, replace the directory with "${ProjDirPath}"
+
+
+
+2. ARDUCOPTER LIBRARIES
+In left menu tab "C/C++ General", "Paths and Symbols",
+In window tab "Source Location":
+Click "Link Folder"
+In the pop-up window, activate "Link to folder in file system", then select the folder "libraries" in "ardupilot" (leave the full absolute path to the directory).
+
+(GCS_Mavlink is compiled with a C compiler, when using C++ preprocessors, it is badly parsed)
+so tried to filter out GCS_Mavlink, and add it on the side with __GNUC__ define)
+but did not work
+on ArduCopter/libraries, click "Edit filter", click "Add exlusion pattern":
+write "GCS_MAVLink/"
+
+3. STANDARD HEADER FILES
+In left menu tab "C/C++ General", "Paths and Symbols",
+In window tab "Includes":
+for language "GNU C++", click "Add...", and enter the following directories (repeat the Add operation for each one):
+
+/opt/gcc-arm-none-eabi-4_7-2014q2/arm-none-eabi/include
+/opt/gcc-arm-none-eabi-4_7-2014q2/lib/gcc/arm-none-eabi/4.7.4/include/
+
+(to replace with your current gcc-arm versions if different)
+
+This step solves the links to stdio.h, math.h, stdarg.h, ...
+
+
+
+4. MANAGE CONFIGURATIONS (Pixhawk, SITL, ...)
+In left menu tab "C/C++ Build",
+In window, click the top right button "Manage Configurations..."
+Rename the default configuration:
+   Name:        Pixhawk
+   Description: Arm compiler and upload to pixhawk board
+
+Add a new configuration:
+   Name:        SITL
+   Description: For the simulation
+   With the copy parameters from the Pixhawk config
+
+
+5. PROJECT PREPROCESSOR DEFINITIONS
+In left menu tab "C/C++ General", "Paths and Symbols",
+In window tab "Symbols":
+
+For the PIXHAWK configuration:
+
+for language "GNU C++", click "Add...", and enter the following name = value pairs (repeat the Add operation for each one):
+
+  FRAME_CONFIG     = QUAD_FRAME
+  CONFIG_HAL_BOARD = HAL_BOARD_PX4
+  HIL_MODE         = HIL_MODE_DISABLED
+
+
+For the SITL configuration:
+Same thing with values:
+
+  FRAME_CONFIG     = QUAD_FRAME
+  CONFIG_HAL_BOARD = HAL_BOARD_SITL
+  HIL_MODE         = HIL_MODE_DISABLED
+
+
+
+
+Clic droit projet Properties
+Resources / Linked Resources
+tab Linked Resources
+en cas de chemin absolu, remplacer par des chemins relatifs, comme:
+${PROJECT_LOC}/../libraries
+
+
+
+Pour definir le lancement:
+clic droit projet / Run As... / Run Configurations
+
+Dans C/C++ Application, faire New
+dans le champ "C/C++ Application:" taper "ArduCopter.elf"
+dans l'onglet Arguments, dans le champ taper :
+-S -I0 --home 44.1538314,4.8018222,50,15 --model + --speedup=1
+
+Ou "../../ArduCopter/ArduCopter.elf" ?
+
+Dans "Build configuration", indiquer "SITL" au lieu de "Use Active".
+
+
+Menu Run / External Tools / External Tools Configuration
+En ajouter une nouvelle :
+nom = MavProxy
+${project_loc:/ArduCopter}/run_mavproxy.sh
+${project_loc:/ArduCopter}/../Tools/autotest/run_mavproxy.sh
+
+(en ayant auparavant fait un chmod +x sur le shell)
+dans l'onglet Build, decocher "Build before launch"
+
+
+Ajouter une nouvelle :
+nom = Gazebo
+${project_loc:/ArduCopter}/../Tools/autotest/run_gazebo.sh
+
+
+
+
+Follow some rules from:
+http://dev.ardupilot.com/wiki/editing-the-code-with-eclipse/
+
+
+Dans le futur, pour aller plus loin:
+http://www.2net.co.uk/tutorial/eclipse-rse
+
+
+
+https://pixhawk.org/dev/jtag/gdb_eclipse
+
+Suivre:
+http://janaxelson.com/eclipse2.htm
+Pour l'install des plugins C++ ?
+
+
+
