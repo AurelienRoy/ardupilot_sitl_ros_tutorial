@@ -1,0 +1,24 @@
+
+Issued from MavProxy's master branch on: 14-10-2015
+
+
+
+To compile it:
+
+  cd ~/shared_sitl/MAVProxy
+  python setup.py build install --user
+
+
+To run it:
+
+  cd ~/shared_sitl/MavProxy/MAVProxy/build/scripts-2.7
+  ./mavproxy.py --version
+  
+For Gazebo
+  ./mavproxy.py --master 127.0.0.1:14550 --out 192.168.1.30:14551 --console --map --aircraft aircraft_ros
+
+For SITL
+  mavproxy.py --master tcp:127.0.0.1:5760 --sitl 127.0.0.1:5501 --out 127.0.0.1:14550 --out 127.0.0.1:14551 --map --console
+
+http://dronecode.github.io/MAVProxy/html/development/mavdevenv.html
+
